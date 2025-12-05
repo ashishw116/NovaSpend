@@ -20,42 +20,42 @@ import dev.ashishwagh.novaspend.service.FinanceEntryService;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/finance")
+@RequestMapping("/users/{userId}/finance")
 public class FinanceEntryController {
 	@Autowired
 	private FinanceEntryService financeEntryService;
 	
 	@GetMapping
-	public ResponseEntity<List<FinanceEntryResponse>> getAllEntrys()
+	public ResponseEntity<List<FinanceEntryResponse>> getAllEntrys(@PathVariable String userId)
 	{
-		List<FinanceEntryResponse> financeEntries=financeEntryService.getAllEntries();
+		List<FinanceEntryResponse> financeEntries=financeEntryService.getAllEntries(userId);
 		return new ResponseEntity<>(financeEntries,HttpStatus.OK);
 	}
-	@GetMapping("/{id}")
-	public ResponseEntity<FinanceEntryResponse> getEntryById(@PathVariable String id)
+	@GetMapping("/{entryId}")
+	public ResponseEntity<FinanceEntryResponse> getEntryById(@PathVariable String entryId,@PathVariable String userId)
 	{
-		FinanceEntryResponse financeEntry=financeEntryService.getEntry(id);
+		FinanceEntryResponse financeEntry=financeEntryService.getEntry(entryId,userId);
 		return new ResponseEntity<>(financeEntry,HttpStatus.OK);
 	}
 	
 	@PostMapping
-	public ResponseEntity<FinanceEntryResponse> addEntry(@Valid @RequestBody FinanceEntryRequest financeEntryRequest)
+	public ResponseEntity<FinanceEntryResponse> addEntry(@Valid @RequestBody FinanceEntryRequest financeEntryRequest,@PathVariable String userId)
 	{
-		FinanceEntryResponse financeEntry=financeEntryService.createEntry(financeEntryRequest);
+		FinanceEntryResponse financeEntry=financeEntryService.createEntry(financeEntryRequest,userId);
 		return new ResponseEntity<>(financeEntry,HttpStatus.CREATED);
 	}
-	@PutMapping("/{id}")
-	public ResponseEntity<FinanceEntryResponse> updateEntry(@PathVariable String id,@Valid @RequestBody FinanceEntryRequest financeEntryRequest)
+	@PutMapping("/{entryId}")
+	public ResponseEntity<FinanceEntryResponse> updateEntry(@PathVariable String entryId,@Valid @RequestBody FinanceEntryRequest financeEntryRequest,@PathVariable String userId)
 	{
 		
-		FinanceEntryResponse financeEntry=financeEntryService.updateEntry(id,financeEntryRequest);
+		FinanceEntryResponse financeEntry=financeEntryService.updateEntry(entryId,financeEntryRequest,userId);
 		return new ResponseEntity<>(financeEntry,HttpStatus.OK);
 	}
-	@DeleteMapping("/{id}")
-	public ResponseEntity<?> deleteEntry(@PathVariable String id)
+	@DeleteMapping("/{entryId}")
+	public ResponseEntity<?> deleteEntry(@PathVariable String entryId,@PathVariable String userId)
 	{
 		
-		financeEntryService.deleteEntry(id);
+		financeEntryService.deleteEntry(entryId,userId);
 		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}
 }

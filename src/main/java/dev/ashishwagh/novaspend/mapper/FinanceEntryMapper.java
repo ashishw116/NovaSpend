@@ -1,9 +1,11 @@
 package dev.ashishwagh.novaspend.mapper;
 
+import org.springframework.stereotype.Component;
+
 import dev.ashishwagh.novaspend.dto.FinanceEntryRequest;
 import dev.ashishwagh.novaspend.dto.FinanceEntryResponse;
 import dev.ashishwagh.novaspend.model.FinanceEntry;
-
+@Component
 public class FinanceEntryMapper {
 	public FinanceEntry toEntity(FinanceEntryRequest financeEntryRequest)
 	{

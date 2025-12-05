@@ -19,27 +19,32 @@ public class FinanceEntryServiceImpl implements FinanceEntryService{
 	@Autowired
 	FinanceEntryMapper entryMapper;
 	@Override
-	public FinanceEntryResponse createEntry(FinanceEntryRequest financeEntryRequest) {
+	public FinanceEntryResponse createEntry(FinanceEntryRequest financeEntryRequest,String userId) {
 		FinanceEntry financeEntry=entryMapper.toEntity(financeEntryRequest);
+		financeEntry.setUserId(userId);
 		FinanceEntry saveEntry=financeEntryRepository.save(financeEntry);
 		return entryMapper.toResponse(saveEntry);
 	}
 
 	@Override
-	public FinanceEntryResponse getEntry(String id) {
-		FinanceEntry financeEntry=financeEntryRepository.findById(id).orElseThrow(()->new RuntimeException("Entry Not Found : "+id));
+	public FinanceEntryResponse getEntry(String entryId,String userId) {
+		FinanceEntry financeEntry=financeEntryRepository.findById(entryId).orElseThrow(()->new RuntimeException("Entry Not Found : "+entryId));
+		if(!financeEntry.getUserId().equals(userId))
+			throw new RuntimeException("Entry Not Found : "+entryId);
 		return entryMapper.toResponse(financeEntry);
 	}
 
 	@Override
-	public List<FinanceEntryResponse> getAllEntries() {
-		List<FinanceEntry> financeEntries=financeEntryRepository.findAll();
+	public List<FinanceEntryResponse> getAllEntries(String userId) {
+		List<FinanceEntry> financeEntries=financeEntryRepository.findByUserId(userId);
 		return financeEntries.stream().map(entryMapper::toResponse).collect(Collectors.toList());
 	}
 
 	@Override
-	public FinanceEntryResponse updateEntry(String id, FinanceEntryRequest financeEntryRequest) {
-		FinanceEntry financeEntry=financeEntryRepository.findById(id).orElseThrow(()->new RuntimeException("Entry Not Found : "+id));
+	public FinanceEntryResponse updateEntry(String entryId, FinanceEntryRequest financeEntryRequest,String userId) {
+		FinanceEntry financeEntry=financeEntryRepository.findById(entryId).orElseThrow(()->new RuntimeException("Entry Not Found : "+entryId));
+		if(!financeEntry.getUserId().equals(userId))
+			throw new RuntimeException("Entry Not Found : "+entryId);
 		financeEntry.setAmount(financeEntryRequest.getAmount());
 		financeEntry.setCategory(financeEntryRequest.getCategory());
 		financeEntry.setDescription(financeEntryRequest.getDescription());
@@ -51,8 +56,12 @@ public class FinanceEntryServiceImpl implements FinanceEntryService{
 	}
 
 	@Override
-	public void deleteEntry(String id) {
-		financeEntryRepository.deleteById(id);
+	public void deleteEntry(String entryId,String userId) {
+		FinanceEntry financeEntry=financeEntryRepository.findById(entryId).orElseThrow(()->new RuntimeException("Entry Not Found : "+entryId));
+		if(financeEntry.getUserId().equals(userId))
+			financeEntryRepository.deleteById(entryId);
+		else
+			throw new RuntimeException("Entry Not Found : "+entryId);
 	}
 
 }

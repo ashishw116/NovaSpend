@@ -6,9 +6,9 @@ import dev.ashishwagh.novaspend.dto.FinanceEntryRequest;
 import dev.ashishwagh.novaspend.dto.FinanceEntryResponse;
 
 public interface FinanceEntryService {
-	FinanceEntryResponse createEntry(FinanceEntryRequest financeEntryRequest);
-	FinanceEntryResponse getEntry(String id);
-	List<FinanceEntryResponse> getAllEntries();
-	FinanceEntryResponse updateEntry(String id,FinanceEntryRequest financeEntryRequest);
-	void deleteEntry(String id);
+	FinanceEntryResponse createEntry(FinanceEntryRequest financeEntryRequest,String userId);
+	FinanceEntryResponse getEntry(String id,String userId);
+	List<FinanceEntryResponse> getAllEntries(String userId);
+	FinanceEntryResponse updateEntry(String id,FinanceEntryRequest financeEntryRequest,String userId);
+	void deleteEntry(String id,String userId);
 }

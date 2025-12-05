@@ -26,6 +26,8 @@ public class FinanceEntry {
 	@NotNull
 	private EntryType type;
 	@NotBlank
+	private String userId;
+	@NotBlank
 	private String description;
 	private List<String> tags=new ArrayList<>();
 }
