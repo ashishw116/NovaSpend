@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 
 import dev.ashishwagh.novaspend.dto.FinanceEntryRequest;
 import dev.ashishwagh.novaspend.dto.FinanceEntryResponse;
+import dev.ashishwagh.novaspend.exception.ResourceNotFoundException;
+import dev.ashishwagh.novaspend.exception.UnauthorizedAccesException;
 import dev.ashishwagh.novaspend.mapper.FinanceEntryMapper;
 import dev.ashishwagh.novaspend.model.FinanceEntry;
 import dev.ashishwagh.novaspend.repository.FinanceEntryRepository;
@@ -28,9 +30,9 @@ public class FinanceEntryServiceImpl implements FinanceEntryService{
 
 	@Override
 	public FinanceEntryResponse getEntry(String entryId,String userId) {
-		FinanceEntry financeEntry=financeEntryRepository.findById(entryId).orElseThrow(()->new RuntimeException("Entry Not Found : "+entryId));
+		FinanceEntry financeEntry=financeEntryRepository.findById(entryId).orElseThrow(()->new ResourceNotFoundException("Finance entry not found "));
 		if(!financeEntry.getUserId().equals(userId))
-			throw new RuntimeException("Entry Not Found : "+entryId);
+			throw new UnauthorizedAccesException("You cannot access this entry ");
 		return entryMapper.toResponse(financeEntry);
 	}
 
@@ -42,9 +44,9 @@ public class FinanceEntryServiceImpl implements FinanceEntryService{
 
 	@Override
 	public FinanceEntryResponse updateEntry(String entryId, FinanceEntryRequest financeEntryRequest,String userId) {
-		FinanceEntry financeEntry=financeEntryRepository.findById(entryId).orElseThrow(()->new RuntimeException("Entry Not Found : "+entryId));
+		FinanceEntry financeEntry=financeEntryRepository.findById(entryId).orElseThrow(()->new ResourceNotFoundException("Finance entry not found "));
 		if(!financeEntry.getUserId().equals(userId))
-			throw new RuntimeException("Entry Not Found : "+entryId);
+			throw new UnauthorizedAccesException("You cannot access this entry ");
 		financeEntry.setAmount(financeEntryRequest.getAmount());
 		financeEntry.setCategory(financeEntryRequest.getCategory());
 		financeEntry.setDescription(financeEntryRequest.getDescription());
@@ -57,11 +59,10 @@ public class FinanceEntryServiceImpl implements FinanceEntryService{
 
 	@Override
 	public void deleteEntry(String entryId,String userId) {
-		FinanceEntry financeEntry=financeEntryRepository.findById(entryId).orElseThrow(()->new RuntimeException("Entry Not Found : "+entryId));
-		if(financeEntry.getUserId().equals(userId))
-			financeEntryRepository.deleteById(entryId);
-		else
-			throw new RuntimeException("Entry Not Found : "+entryId);
+		FinanceEntry financeEntry=financeEntryRepository.findById(entryId).orElseThrow(()->new ResourceNotFoundException("Finance entry not found "));
+		if(!financeEntry.getUserId().equals(userId))
+			throw new UnauthorizedAccesException("You cannot access this entry ");
+		financeEntryRepository.deleteById(entryId);
 	}
 
 }

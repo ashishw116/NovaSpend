@@ -5,12 +5,14 @@ import java.util.Optional;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import dev.ashishwagh.novaspend.dto.LoginRequest;
 import dev.ashishwagh.novaspend.dto.SignUpRequest;
 import dev.ashishwagh.novaspend.dto.UserResponse;
+import dev.ashishwagh.novaspend.exception.UserAlreadyExistException;
 import dev.ashishwagh.novaspend.mapper.UserMapper;
 import dev.ashishwagh.novaspend.model.User;
 import dev.ashishwagh.novaspend.repository.UserRepository;
@@ -30,9 +32,8 @@ public class AuthServiceImpl implements AuthService{
 	@Override
 	public UserResponse signup(SignUpRequest request) {
 		Optional<User> user=userRepository.findByEmail(request.getEmail());
-		if(user.isPresent())
-		{
-			throw new RuntimeException("Email Already Registered To User");
+		if (user.isPresent()) {
+		    throw new UserAlreadyExistException("Email already registered");
 		}
 		User newUser=userMapper.toUser(request);
 		newUser.setPassword(passwordEncoder.encode(request.getPassword()));
