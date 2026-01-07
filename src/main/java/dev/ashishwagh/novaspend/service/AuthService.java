@@ -7,4 +7,5 @@ import dev.ashishwagh.novaspend.dto.UserResponse;
 public interface AuthService {
 	UserResponse signup(SignUpRequest request);
 	UserResponse login(LoginRequest request);
+	
 }
