@@ -2,7 +2,6 @@ package dev.ashishwagh.novaspend.controller;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -17,55 +16,52 @@ import org.springframework.web.bind.annotation.RestController;
 
 import dev.ashishwagh.novaspend.dto.FinanceEntryRequest;
 import dev.ashishwagh.novaspend.dto.FinanceEntryResponse;
-import dev.ashishwagh.novaspend.model.User;
+import dev.ashishwagh.novaspend.response.ApiResponse;
 import dev.ashishwagh.novaspend.service.FinanceEntryService;
+import dev.ashishwagh.novaspend.utility.SecurityUtil;
 import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
 
 @RestController
 @RequestMapping("/finance")
+@AllArgsConstructor
 public class FinanceEntryController {
-	@Autowired
-	private FinanceEntryService financeEntryService;
-	
-	private String getUserId(Authentication authentication) {
-	    return ((User) authentication.getPrincipal()).getId();
-	}
-
+	private final FinanceEntryService financeEntryService;
+	private final SecurityUtil util;
 	@GetMapping
-	public ResponseEntity<List<FinanceEntryResponse>> getAllEntrys(Authentication authentication)
+	public ResponseEntity<ApiResponse<List<FinanceEntryResponse>>> getAllEntries(Authentication authentication)
 	{
-        String userId = getUserId(authentication);
+        String userId = util.getUserId(authentication);
 		List<FinanceEntryResponse> financeEntries=financeEntryService.getAllEntries(userId);
-	
-		return new ResponseEntity<>(financeEntries,HttpStatus.OK);
+		return ResponseEntity.ok(ApiResponse.success("Entries Fetched Successfully",financeEntries));
 	}
 	@GetMapping("/{entryId}")
-	public ResponseEntity<FinanceEntryResponse> getEntryById(@PathVariable String entryId,Authentication authentication)
+	public ResponseEntity<ApiResponse<FinanceEntryResponse>> getEntryById(@PathVariable String entryId,Authentication authentication)
 	{
-		String userId = getUserId(authentication);
+		String userId = util.getUserId(authentication);
 		FinanceEntryResponse financeEntry=financeEntryService.getEntry(entryId,userId);
-		return new ResponseEntity<>(financeEntry,HttpStatus.OK);
+		return ResponseEntity.ok(ApiResponse.success("Entry Fetched Successfully",financeEntry));
 	}
 	
 	@PostMapping
-	public ResponseEntity<FinanceEntryResponse> addEntry(@Valid @RequestBody FinanceEntryRequest financeEntryRequest,Authentication authentication)
+	public ResponseEntity<ApiResponse<FinanceEntryResponse>> addEntry(@Valid @RequestBody FinanceEntryRequest financeEntryRequest,Authentication authentication)
 	{
-		String userId = getUserId(authentication);
+		String userId = util.getUserId(authentication);
 		FinanceEntryResponse financeEntry=financeEntryService.createEntry(financeEntryRequest,userId);
-		return new ResponseEntity<>(financeEntry,HttpStatus.CREATED);
+		return new ResponseEntity<>(ApiResponse.success("Entry Created Successfully",financeEntry),HttpStatus.CREATED);
 	}
 	@PutMapping("/{entryId}")
-	public ResponseEntity<FinanceEntryResponse> updateEntry(@PathVariable String entryId,@Valid @RequestBody FinanceEntryRequest financeEntryRequest,Authentication authentication)
+	public ResponseEntity<ApiResponse<FinanceEntryResponse>> updateEntry(@PathVariable String entryId,@Valid @RequestBody FinanceEntryRequest financeEntryRequest,Authentication authentication)
 	{
-		String userId = getUserId(authentication);
+		String userId = util.getUserId(authentication);
 		FinanceEntryResponse financeEntry=financeEntryService.updateEntry(entryId,financeEntryRequest,userId);
-		return new ResponseEntity<>(financeEntry,HttpStatus.OK);
+		return ResponseEntity.ok(ApiResponse.success("Entry Updated Successfully",financeEntry));
 	}
 	@DeleteMapping("/{entryId}")
-	public ResponseEntity<?> deleteEntry(@PathVariable String entryId,Authentication authentication)
+	public ResponseEntity<ApiResponse<Void>> deleteEntry(@PathVariable String entryId,Authentication authentication)
 	{
-		String userId = getUserId(authentication);
+		String userId = util.getUserId(authentication);
 		financeEntryService.deleteEntry(entryId,userId);
-		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+		return ResponseEntity.ok(ApiResponse.success("Entry Deleted Successfully"));
 	}
 }

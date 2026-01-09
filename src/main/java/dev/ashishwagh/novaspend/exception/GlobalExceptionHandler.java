@@ -1,9 +1,10 @@
 package dev.ashishwagh.novaspend.exception;
 
+import java.util.HashMap;
+import java.util.Map;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -18,8 +19,8 @@ public class GlobalExceptionHandler {
 		ApiError error=new ApiError("Not Found",ex.getMessage(),request.getRequestURI(),404);
 		return new ResponseEntity<>(error,HttpStatus.NOT_FOUND);
 	}
-	@ExceptionHandler(UnauthorizedAccesException.class)
-	public ResponseEntity<ApiError> handleUnauthorizeAccesException(UnauthorizedAccesException ex,HttpServletRequest request)
+	@ExceptionHandler(UnauthorizedAccessException.class)
+	public ResponseEntity<ApiError> handleUnauthorizeAccesException(UnauthorizedAccessException ex,HttpServletRequest request)
 	{
 		ApiError error=new ApiError("Forbidden",ex.getMessage(),request.getRequestURI(),403);
 		return new ResponseEntity<>(error,HttpStatus.FORBIDDEN);
@@ -30,20 +31,19 @@ public class GlobalExceptionHandler {
 		ApiError error=new ApiError("User Already Exist",ex.getMessage(),request.getRequestURI(),409);
 		return new ResponseEntity<>(error,HttpStatus.CONFLICT);
 	}
-	@ExceptionHandler(BadCredentialsException.class)
-	public ResponseEntity<ApiError> handleBadCredentialsException(BadCredentialsException ex,HttpServletRequest request)
-	{
-		ApiError error=new ApiError("Unauthorized","Invalid Email & Password",request.getRequestURI(),401);
-		return new ResponseEntity<>(error,HttpStatus.UNAUTHORIZED);
-	}
-	@ExceptionHandler(UsernameNotFoundException.class)
-	public ResponseEntity<ApiError> handleUsernameNotFoundException(UsernameNotFoundException ex,HttpServletRequest request)
-	{
-		ApiError error=new ApiError("UnAuthorized","User Not Found",request.getRequestURI(),401);
-		return new ResponseEntity<>(error,HttpStatus.UNAUTHORIZED);
-	}
+	@ExceptionHandler(MethodArgumentNotValidException.class)
+	public ResponseEntity<ApiError> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex,HttpServletRequest request) {
+		Map<String,String> fielderrors=new HashMap<>();
+		ex.getBindingResult()
+		.getFieldErrors()
+		.forEach(error-> fielderrors
+				.put(error.getField(), error.getDefaultMessage()));
+		ApiError error=new ApiError("Validation Failed","Invalid request data",request.getRequestURI(),400,fielderrors);
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
 	@ExceptionHandler(Exception.class)
-    public ResponseEntity<String> handleGeneralException(Exception ex) {
-        return new ResponseEntity<>("An unexpected error occurred: " + ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    public ResponseEntity<ApiError> handleGeneralException(Exception ex,HttpServletRequest request) {
+		ApiError error=new ApiError("Unexpected Error","Internal Server Error",request.getRequestURI(),500);
+        return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

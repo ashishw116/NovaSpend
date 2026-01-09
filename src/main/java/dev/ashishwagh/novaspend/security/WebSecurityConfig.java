@@ -12,6 +12,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import dev.ashishwagh.novaspend.exception.JwtAccessDeniedHandler;
+import dev.ashishwagh.novaspend.exception.JwtAuthExceptionHandler;
 import lombok.RequiredArgsConstructor;
 
 @Configuration
@@ -19,6 +21,9 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class WebSecurityConfig {
 
+    private final AuthenticationManager authenticationManager;
+	private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
+	private final JwtAuthExceptionHandler jwtAuthExceptionHandler;
 	private final JWTAuthFilter jwtAuthFilter;
 	@Bean
 	public PasswordEncoder passwordEncoder() {
@@ -39,6 +44,10 @@ public class WebSecurityConfig {
 			.requestMatchers("/auth/**").permitAll()
 			.requestMatchers("/finance/**").authenticated()
 			.anyRequest().authenticated()
+		)
+		.exceptionHandling(ex->
+			ex.authenticationEntryPoint(jwtAuthExceptionHandler)
+			.accessDeniedHandler(jwtAccessDeniedHandler)
 		)
 		.sessionManagement(session ->
 	        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)

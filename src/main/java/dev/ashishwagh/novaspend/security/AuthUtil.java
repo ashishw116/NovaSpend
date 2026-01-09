@@ -6,7 +6,6 @@ import java.util.Date;
 import javax.crypto.SecretKey;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import dev.ashishwagh.novaspend.model.User;
@@ -48,5 +47,4 @@ public class AuthUtil {
 	        .getExpiration();
 	    return expiration.before(new Date());
 	}
-
 }
