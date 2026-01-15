@@ -2,10 +2,10 @@ package dev.ashishwagh.novaspend.service;
 
 import dev.ashishwagh.novaspend.dto.LoginRequest;
 import dev.ashishwagh.novaspend.dto.SignUpRequest;
-import dev.ashishwagh.novaspend.dto.UserResponse;
+import dev.ashishwagh.novaspend.dto.UserAuthResponse;
 
 public interface AuthService {
-	UserResponse signup(SignUpRequest request);
-	UserResponse login(LoginRequest request);
+	UserAuthResponse signup(SignUpRequest request);
+	UserAuthResponse login(LoginRequest request);
 	
 }

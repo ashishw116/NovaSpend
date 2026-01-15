@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import dev.ashishwagh.novaspend.dto.LoginRequest;
 import dev.ashishwagh.novaspend.dto.SignUpRequest;
-import dev.ashishwagh.novaspend.dto.UserResponse;
+import dev.ashishwagh.novaspend.dto.UserAuthResponse;
 import dev.ashishwagh.novaspend.response.ApiResponse;
 import dev.ashishwagh.novaspend.service.AuthService;
 import jakarta.validation.Valid;     
@@ -21,15 +21,15 @@ public class AuthController {
 	@Autowired
 	private  AuthService authService;
 	@PostMapping("/signup")
-	public ResponseEntity<ApiResponse<UserResponse>> signup(@Valid @RequestBody SignUpRequest request)
+	public ResponseEntity<ApiResponse<UserAuthResponse>> signup(@Valid @RequestBody SignUpRequest request)
 	{
-		UserResponse userResponse=authService.signup(request);
+		UserAuthResponse userResponse=authService.signup(request);
 		return new ResponseEntity<>(ApiResponse.success("SignUp Successfully",userResponse),HttpStatus.CREATED);
 	}
 	@PostMapping("/login")
-	public ResponseEntity<ApiResponse<UserResponse>> login(@Valid @RequestBody LoginRequest request)
+	public ResponseEntity<ApiResponse<UserAuthResponse>> login(@Valid @RequestBody LoginRequest request)
 	{
-		UserResponse userResponse=authService.login(request);
+		UserAuthResponse userResponse=authService.login(request);
 		return ResponseEntity.ok(ApiResponse.success("Login Successfully",userResponse));
 	}
 }

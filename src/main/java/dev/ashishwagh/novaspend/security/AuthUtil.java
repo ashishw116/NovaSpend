@@ -25,6 +25,7 @@ public class AuthUtil {
 		return Jwts.builder()
 				.subject(user.getEmail())
 				.claim("user_id",user.getId().toString())
+				.claim("role","ROLE_"+user.getRole().name())
 				.issuedAt(new Date())
 				.expiration(new Date(System.currentTimeMillis()+1000*60*20))
 				.signWith(getSecretKey())
@@ -37,6 +38,14 @@ public class AuthUtil {
 				.parseSignedClaims(token)
 				.getPayload()
 				.getSubject();
+	}
+	public String getUserRole(String token) {
+		return Jwts.parser()
+				.verifyWith(getSecretKey())
+				.build()
+				.parseSignedClaims(token)
+				.getPayload()
+				.get("role",String.class);
 	}
 	public boolean isTokenExpired(String token) {
 	    Date expiration = Jwts.parser()

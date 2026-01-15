@@ -21,7 +21,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class WebSecurityConfig {
 
-    private final AuthenticationManager authenticationManager;
 	private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
 	private final JwtAuthExceptionHandler jwtAuthExceptionHandler;
 	private final JWTAuthFilter jwtAuthFilter;
@@ -42,7 +41,8 @@ public class WebSecurityConfig {
 		httpSecurity.csrf(csrf->csrf.disable())
 		.authorizeHttpRequests(auth-> auth
 			.requestMatchers("/auth/**").permitAll()
-			.requestMatchers("/finance/**").authenticated()
+			.requestMatchers("/finance/**").hasRole("USER")
+			.requestMatchers("/admin/**").hasRole("ADMIN")
 			.anyRequest().authenticated()
 		)
 		.exceptionHandling(ex->
