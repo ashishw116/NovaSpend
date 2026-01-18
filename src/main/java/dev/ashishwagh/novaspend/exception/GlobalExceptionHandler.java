@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -41,9 +42,24 @@ public class GlobalExceptionHandler {
 		ApiError error=new ApiError("Validation Failed","Invalid request data",request.getRequestURI(),400,fielderrors);
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
+	@ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<ApiError> handleIllegalStateException(IllegalStateException ex,HttpServletRequest request) {
+		ApiError error=new ApiError("Bad Request",ex.getMessage(),request.getRequestURI(),400);
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
+	@ExceptionHandler(InvalidTokenException.class)
+	public ResponseEntity<ApiError> handleInvalidTokenException(InvalidTokenException ex,HttpServletRequest request) {
+	    ApiError error = new ApiError("Unauthorized",ex.getMessage(),request.getRequestURI(),401);
+	    return new ResponseEntity<>(error, HttpStatus.UNAUTHORIZED);
+	}
+	@ExceptionHandler(BadCredentialsException.class)
+	public ResponseEntity<ApiError> handleBadCredentials(BadCredentialsException ex,HttpServletRequest request) {
+	    ApiError error = new ApiError("Unauthorized","Invalid email or password",request.getRequestURI(),401);
+	    return new ResponseEntity<>(error, HttpStatus.UNAUTHORIZED);
+	}
 	@ExceptionHandler(Exception.class)
     public ResponseEntity<ApiError> handleGeneralException(Exception ex,HttpServletRequest request) {
-		ApiError error=new ApiError("Unexpected Error","Internal Server Error",request.getRequestURI(),500);
+		ApiError error=new ApiError("Unexpected Error",ex.getMessage(),request.getRequestURI(),500);
         return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

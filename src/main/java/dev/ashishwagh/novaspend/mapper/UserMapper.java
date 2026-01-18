@@ -1,8 +1,10 @@
 package dev.ashishwagh.novaspend.mapper;
 
+import org.springframework.stereotype.Component;
+
 import dev.ashishwagh.novaspend.dto.UserResponse;
 import dev.ashishwagh.novaspend.model.User;
-
+@Component
 public class UserMapper {
 	public UserResponse toUserResponse(User user) {
 	    UserResponse dto = new UserResponse();

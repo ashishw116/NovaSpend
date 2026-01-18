@@ -3,7 +3,6 @@ package dev.ashishwagh.novaspend.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import dev.ashishwagh.novaspend.dto.FinanceEntryRequest;
@@ -13,13 +12,13 @@ import dev.ashishwagh.novaspend.exception.UnauthorizedAccessException;
 import dev.ashishwagh.novaspend.mapper.FinanceEntryMapper;
 import dev.ashishwagh.novaspend.model.FinanceEntry;
 import dev.ashishwagh.novaspend.repository.FinanceEntryRepository;
+import lombok.AllArgsConstructor;
 @Service
+@AllArgsConstructor
 public class FinanceEntryServiceImpl implements FinanceEntryService{
 
-	@Autowired
-	FinanceEntryRepository financeEntryRepository;
-	@Autowired
-	FinanceEntryMapper entryMapper;
+	private final FinanceEntryRepository financeEntryRepository;
+	private final FinanceEntryMapper entryMapper;
 	@Override
 	public FinanceEntryResponse createEntry(FinanceEntryRequest financeEntryRequest,String userId) {
 		FinanceEntry financeEntry=entryMapper.toEntity(financeEntryRequest);

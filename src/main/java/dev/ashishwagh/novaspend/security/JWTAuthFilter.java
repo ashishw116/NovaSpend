@@ -8,6 +8,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -22,6 +23,11 @@ public class JWTAuthFilter extends OncePerRequestFilter{
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
 			final String requestTokenHeader=request.getHeader("Authorization");
+			String path = request.getRequestURI();
+			if (path.startsWith("/swagger-ui") || path.startsWith("/v3/api-docs")) {
+			    filterChain.doFilter(request, response);
+			    return;
+			}
 			if(requestTokenHeader==null||!requestTokenHeader.startsWith("Bearer "))
 			{
 				filterChain.doFilter(request, response);
@@ -29,7 +35,7 @@ public class JWTAuthFilter extends OncePerRequestFilter{
 			}
 			String token = requestTokenHeader.substring(7);
 			if (authUtil.isTokenExpired(token))
-				throw new io.jsonwebtoken.JwtException("Token expired");
+				throw new JwtException("Token expired");
 			String email=authUtil.getUserEmail(token);
 			if(email!=null&&SecurityContextHolder.getContext().getAuthentication()==null)
 			{					

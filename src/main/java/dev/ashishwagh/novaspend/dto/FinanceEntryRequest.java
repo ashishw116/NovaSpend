@@ -29,6 +29,7 @@ public class FinanceEntryRequest {
 	@NotNull(message = "Entry type is required")
 	private EntryType type;
 	
+	@NotBlank(message = "Description is required")
 	@Size(max = 200, message = "Description cannot exceed 200 characters")
 	private String description;
 	

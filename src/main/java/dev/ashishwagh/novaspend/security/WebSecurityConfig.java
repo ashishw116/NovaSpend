@@ -40,7 +40,7 @@ public class WebSecurityConfig {
 	{
 		httpSecurity.csrf(csrf->csrf.disable())
 		.authorizeHttpRequests(auth-> auth
-			.requestMatchers("/auth/**").permitAll()
+			.requestMatchers("/auth/**","/swagger-ui/**","/swagger-ui.html","/v3/api-docs/**").permitAll()
 			.requestMatchers("/finance/**").hasRole("USER")
 			.requestMatchers("/admin/**").hasRole("ADMIN")
 			.anyRequest().authenticated()

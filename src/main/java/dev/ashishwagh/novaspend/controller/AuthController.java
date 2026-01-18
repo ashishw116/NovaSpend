@@ -1,6 +1,5 @@
 package dev.ashishwagh.novaspend.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -9,17 +8,20 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import dev.ashishwagh.novaspend.dto.LoginRequest;
+import dev.ashishwagh.novaspend.dto.RefreshTokenRequest;
 import dev.ashishwagh.novaspend.dto.SignUpRequest;
 import dev.ashishwagh.novaspend.dto.UserAuthResponse;
+import dev.ashishwagh.novaspend.model.RefreshToken;
 import dev.ashishwagh.novaspend.response.ApiResponse;
 import dev.ashishwagh.novaspend.service.AuthService;
-import jakarta.validation.Valid;     
+import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;     
 
 @RestController
 @RequestMapping("/auth")
+@AllArgsConstructor
 public class AuthController {
-	@Autowired
-	private  AuthService authService;
+	private final AuthService authService;
 	@PostMapping("/signup")
 	public ResponseEntity<ApiResponse<UserAuthResponse>> signup(@Valid @RequestBody SignUpRequest request)
 	{
@@ -31,5 +33,11 @@ public class AuthController {
 	{
 		UserAuthResponse userResponse=authService.login(request);
 		return ResponseEntity.ok(ApiResponse.success("Login Successfully",userResponse));
+	}
+	@PostMapping("/refresh")
+	public ResponseEntity<ApiResponse<UserAuthResponse>> refreshToken(@RequestBody RefreshTokenRequest request)
+	{
+		UserAuthResponse userResponse=authService.refreshAccessToken(request.getRefreshToken());
+		return ResponseEntity.ok(ApiResponse.success("Token refreshed Successfully",userResponse));
 	}
 }
