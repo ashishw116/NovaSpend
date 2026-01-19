@@ -23,7 +23,6 @@ import dev.ashishwagh.novaspend.model.RefreshToken;
 import dev.ashishwagh.novaspend.model.Roles;
 import dev.ashishwagh.novaspend.model.Status;
 import dev.ashishwagh.novaspend.model.User;
-import dev.ashishwagh.novaspend.repository.RefreshTokenRepo;
 import dev.ashishwagh.novaspend.repository.UserRepository;
 import dev.ashishwagh.novaspend.security.AuthUtil;
 import lombok.RequiredArgsConstructor;
@@ -77,6 +76,12 @@ public class AuthServiceImpl implements AuthService{
 		response.setJwt(token);
 		response.setRefreshToken(refreshToken.getToken());
 		return response;
+	}
+	@Override
+	public void logout(String refreshToken)
+	{
+		RefreshToken token=refreshTokenService.findByToken(refreshToken).orElseThrow(()->new InvalidTokenException("Invalid Refresh Token "));
+		refreshTokenService.deleteByUserId(token.getUserId());
 	}
 	@Transactional
 	@Override

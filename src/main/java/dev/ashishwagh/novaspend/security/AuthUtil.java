@@ -16,7 +16,7 @@ import io.jsonwebtoken.security.Keys;
 public class AuthUtil {
 	@Value("${jwt.secretKey}")
 	private String secretKey;
-	@Value("${jwt.expiry}")
+	@Value("${jwt.accessTokenExpiry}")
 	private long jwtExpiry;
 	private SecretKey getSecretKey()
 	{
@@ -29,7 +29,7 @@ public class AuthUtil {
 				.claim("user_id",user.getId().toString())
 				.claim("role","ROLE_"+user.getRole().name())
 				.issuedAt(new Date())
-				.expiration(new Date(System.currentTimeMillis()+jwtExpiry))
+				.expiration(new Date(System.currentTimeMillis()+jwtExpiry*1000))
 				.signWith(getSecretKey())
 				.compact();
 	}
@@ -48,14 +48,5 @@ public class AuthUtil {
 				.parseSignedClaims(token)
 				.getPayload()
 				.get("role",String.class);
-	}
-	public boolean isTokenExpired(String token) {
-	    Date expiration = Jwts.parser()
-	        .verifyWith(getSecretKey())
-	        .build()
-	        .parseSignedClaims(token)
-	        .getPayload()
-	        .getExpiration();
-	    return expiration.before(new Date());
 	}
 }

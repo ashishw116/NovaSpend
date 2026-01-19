@@ -3,10 +3,15 @@ package dev.ashishwagh.novaspend.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import dev.ashishwagh.novaspend.dto.FinanceEntryRequest;
 import dev.ashishwagh.novaspend.dto.FinanceEntryResponse;
+import dev.ashishwagh.novaspend.dto.PageResponse;
 import dev.ashishwagh.novaspend.exception.ResourceNotFoundException;
 import dev.ashishwagh.novaspend.exception.UnauthorizedAccessException;
 import dev.ashishwagh.novaspend.mapper.FinanceEntryMapper;
@@ -36,12 +41,6 @@ public class FinanceEntryServiceImpl implements FinanceEntryService{
 	}
 
 	@Override
-	public List<FinanceEntryResponse> getAllEntries(String userId) {
-		List<FinanceEntry> financeEntries=financeEntryRepository.findByUserId(userId);
-		return financeEntries.stream().map(entryMapper::toResponse).collect(Collectors.toList());
-	}
-
-	@Override
 	public FinanceEntryResponse updateEntry(String entryId, FinanceEntryRequest financeEntryRequest,String userId) {
 		FinanceEntry financeEntry=financeEntryRepository.findById(entryId).orElseThrow(()->new ResourceNotFoundException("Finance entry not found "));
 		if(!financeEntry.getUserId().equals(userId))
@@ -62,6 +61,29 @@ public class FinanceEntryServiceImpl implements FinanceEntryService{
 		if(!financeEntry.getUserId().equals(userId))
 			throw new UnauthorizedAccessException("You cannot access this entry ");
 		financeEntryRepository.deleteById(entryId);
+	}
+
+	@Override
+	public PageResponse<FinanceEntryResponse> getAllEntries(int page, int size,String userId) {
+		if(size>50) size=50;
+		if(page<0) page=0;
+		Pageable pageable= PageRequest.of(page,size,Sort.by(Sort.Direction.DESC,"createdAt"));
+		Page<FinanceEntry> financeEntryPage=financeEntryRepository.findByUserId(userId,pageable);
+		List<FinanceEntryResponse> responses=financeEntryPage
+				.getContent()
+				.stream()
+				.map(entryMapper::toResponse)
+				.toList();
+		
+		return new PageResponse<>(
+				responses,
+				financeEntryPage.getNumber(),
+				financeEntryPage.getSize(),
+				financeEntryPage.getTotalElements(),
+				financeEntryPage.getTotalPages(),
+				financeEntryPage.hasPrevious(),
+				financeEntryPage.hasNext()
+			);
 	}
 
 }

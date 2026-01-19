@@ -8,4 +8,5 @@ public interface AuthService {
 	UserAuthResponse signup(SignUpRequest request);
 	UserAuthResponse login(LoginRequest request);
 	UserAuthResponse refreshAccessToken(String refreshToken);
+	void logout(String refreshToken);
 }

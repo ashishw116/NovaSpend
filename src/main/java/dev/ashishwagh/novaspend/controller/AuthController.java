@@ -11,7 +11,6 @@ import dev.ashishwagh.novaspend.dto.LoginRequest;
 import dev.ashishwagh.novaspend.dto.RefreshTokenRequest;
 import dev.ashishwagh.novaspend.dto.SignUpRequest;
 import dev.ashishwagh.novaspend.dto.UserAuthResponse;
-import dev.ashishwagh.novaspend.model.RefreshToken;
 import dev.ashishwagh.novaspend.response.ApiResponse;
 import dev.ashishwagh.novaspend.service.AuthService;
 import jakarta.validation.Valid;
@@ -33,6 +32,12 @@ public class AuthController {
 	{
 		UserAuthResponse userResponse=authService.login(request);
 		return ResponseEntity.ok(ApiResponse.success("Login Successfully",userResponse));
+	}
+	@PostMapping("/logout")
+	public ResponseEntity<ApiResponse<String>> logout(@Valid @RequestBody LoginRequest request)
+	{
+		UserAuthResponse userResponse=authService.login(request);
+		return ResponseEntity.ok(ApiResponse.success("Login Successfully","OK"));
 	}
 	@PostMapping("/refresh")
 	public ResponseEntity<ApiResponse<UserAuthResponse>> refreshToken(@RequestBody RefreshTokenRequest request)

@@ -12,10 +12,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import dev.ashishwagh.novaspend.dto.FinanceEntryRequest;
 import dev.ashishwagh.novaspend.dto.FinanceEntryResponse;
+import dev.ashishwagh.novaspend.dto.PageResponse;
 import dev.ashishwagh.novaspend.response.ApiResponse;
 import dev.ashishwagh.novaspend.service.FinanceEntryService;
 import dev.ashishwagh.novaspend.utility.SecurityUtil;
@@ -29,11 +31,10 @@ public class FinanceEntryController {
 	private final FinanceEntryService financeEntryService;
 	private final SecurityUtil util;
 	@GetMapping
-	public ResponseEntity<ApiResponse<List<FinanceEntryResponse>>> getAllEntries(Authentication authentication)
+	public ResponseEntity<ApiResponse<PageResponse<FinanceEntryResponse>>> getAllEntries(@RequestParam(defaultValue = "0") int page,@RequestParam(defaultValue = "10") int size,Authentication authentication)
 	{
-        String userId = util.getUserId(authentication);
-		List<FinanceEntryResponse> financeEntries=financeEntryService.getAllEntries(userId);
-		return ResponseEntity.ok(ApiResponse.success("Entries Fetched Successfully",financeEntries));
+		String userId=util.getUserId(authentication);
+		return ResponseEntity.ok(ApiResponse.success("Entries Fetched Successfully",financeEntryService.getAllEntries(page,size,userId)));
 	}
 	@GetMapping("/{entryId}")
 	public ResponseEntity<ApiResponse<FinanceEntryResponse>> getEntryById(@PathVariable String entryId,Authentication authentication)

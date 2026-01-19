@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import dev.ashishwagh.novaspend.exception.InvalidTokenException;
@@ -15,7 +16,8 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class RefreshTokenServiceImpl implements RefreshTokenService{
 	private final RefreshTokenRepo refreshTokenRepo;
-	private static final long Ref_Token_Duration=7*24*60*60;
+	@Value("${jwt.refreshTokenExpiry}")
+	private long Ref_Token_Duration;
 	@Override
 	public RefreshToken createRefreshToken(String userId)
 	{
