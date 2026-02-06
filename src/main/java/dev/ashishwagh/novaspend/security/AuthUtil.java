@@ -14,8 +14,10 @@ import io.jsonwebtoken.security.Keys;
 
 @Component
 public class AuthUtil {
+	
 	@Value("${jwt.secretKey}")
 	private String secretKey;
+	
 	@Value("${jwt.accessTokenExpiry}")
 	private long jwtExpiry;
 	private SecretKey getSecretKey()

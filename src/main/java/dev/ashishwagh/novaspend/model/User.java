@@ -5,6 +5,8 @@ import java.util.Collection;
 import java.util.List;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
+import org.springframework.data.mongodb.core.index.CompoundIndexes;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -14,6 +16,9 @@ import lombok.Data;
 
 @Document
 @Data
+@CompoundIndexes({
+	@CompoundIndex(def="{'status' : 1, 'createdAt': -1}")
+})
 public class User implements UserDetails{
 	@Id
 	private String id;

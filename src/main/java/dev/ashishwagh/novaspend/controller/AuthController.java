@@ -34,10 +34,10 @@ public class AuthController {
 		return ResponseEntity.ok(ApiResponse.success("Login Successfully",userResponse));
 	}
 	@PostMapping("/logout")
-	public ResponseEntity<ApiResponse<String>> logout(@Valid @RequestBody LoginRequest request)
+	public ResponseEntity<ApiResponse<String>> logout(@RequestBody RefreshTokenRequest request)
 	{
-		UserAuthResponse userResponse=authService.login(request);
-		return ResponseEntity.ok(ApiResponse.success("Login Successfully","OK"));
+		authService.logout(request.getRefreshToken());
+		return ResponseEntity.ok(ApiResponse.success("Logout Successfully"));
 	}
 	@PostMapping("/refresh")
 	public ResponseEntity<ApiResponse<UserAuthResponse>> refreshToken(@RequestBody RefreshTokenRequest request)

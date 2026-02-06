@@ -1,5 +1,6 @@
 package dev.ashishwagh.novaspend.controller;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
@@ -17,7 +18,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import dev.ashishwagh.novaspend.dto.FinanceEntryRequest;
 import dev.ashishwagh.novaspend.dto.FinanceEntryResponse;
+import dev.ashishwagh.novaspend.dto.FinanceEntryResponseProjection;
 import dev.ashishwagh.novaspend.dto.PageResponse;
+import dev.ashishwagh.novaspend.model.EntryType;
 import dev.ashishwagh.novaspend.response.ApiResponse;
 import dev.ashishwagh.novaspend.service.FinanceEntryService;
 import dev.ashishwagh.novaspend.utility.SecurityUtil;
@@ -31,10 +34,10 @@ public class FinanceEntryController {
 	private final FinanceEntryService financeEntryService;
 	private final SecurityUtil util;
 	@GetMapping
-	public ResponseEntity<ApiResponse<PageResponse<FinanceEntryResponse>>> getAllEntries(@RequestParam(defaultValue = "0") int page,@RequestParam(defaultValue = "10") int size,Authentication authentication)
+	public ResponseEntity<ApiResponse<PageResponse<FinanceEntryResponseProjection>>> getAllEntries(@RequestParam(defaultValue = "0") int page,@RequestParam(defaultValue = "10") int size,@RequestParam(required = false) EntryType type,@RequestParam(required = false) List<String> categories,@RequestParam(required = false) LocalDate fromDate,@RequestParam(required = false) LocalDate toDate ,Authentication authentication)
 	{
 		String userId=util.getUserId(authentication);
-		return ResponseEntity.ok(ApiResponse.success("Entries Fetched Successfully",financeEntryService.getAllEntries(page,size,userId)));
+		return ResponseEntity.ok(ApiResponse.success("Entries Fetched Successfully",financeEntryService.getFilterEntries(userId,page,size,type,categories,fromDate,toDate)));
 	}
 	@GetMapping("/{entryId}")
 	public ResponseEntity<ApiResponse<FinanceEntryResponse>> getEntryById(@PathVariable String entryId,Authentication authentication)

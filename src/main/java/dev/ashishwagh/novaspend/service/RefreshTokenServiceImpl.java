@@ -10,14 +10,16 @@ import org.springframework.stereotype.Service;
 import dev.ashishwagh.novaspend.exception.InvalidTokenException;
 import dev.ashishwagh.novaspend.model.RefreshToken;
 import dev.ashishwagh.novaspend.repository.RefreshTokenRepo;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class RefreshTokenServiceImpl implements RefreshTokenService{
 	private final RefreshTokenRepo refreshTokenRepo;
+	
 	@Value("${jwt.refreshTokenExpiry}")
-	private long Ref_Token_Duration;
+	private long refTokenDuration;
+	
 	@Override
 	public RefreshToken createRefreshToken(String userId)
 	{
@@ -25,7 +27,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService{
 		RefreshToken refreshToken=new RefreshToken();
 		refreshToken.setUserId(userId);
 		refreshToken.setToken(UUID.randomUUID().toString());
-		refreshToken.setExpiryDate(Instant.now().plusSeconds(Ref_Token_Duration));
+		refreshToken.setExpiryDate(Instant.now().plusSeconds(refTokenDuration));
 		return refreshTokenRepo.save(refreshToken);
 	}
 	@Override

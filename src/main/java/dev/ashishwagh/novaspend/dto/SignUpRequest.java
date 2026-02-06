@@ -15,8 +15,11 @@ public class SignUpRequest {
 	@Email(message = "Invalid name format")
 	@NotBlank(message = "Email is required")
 	private String email;
-	@Size(min=6,max=16,message="Password Least Have 6 charecters and Max 16")
-	@Pattern(regexp = "^[A-Za-z0-9]+$", message="Password must contain only letters and numbers")
+	@Pattern(
+			  regexp = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$",
+			  message = "Password must be at least 8 characters, contain one letter, one number, and one special character"
+			)
+
 	@NotBlank(message = "Password is required")
 	private String password;
 }

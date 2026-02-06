@@ -1,10 +1,11 @@
 package dev.ashishwagh.novaspend.service;
 
-import java.util.List;
-import java.util.Optional;
+import java.time.LocalDateTime;
 
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
+import dev.ashishwagh.novaspend.dto.PageResponse;
 import dev.ashishwagh.novaspend.dto.UserResponse;
 import dev.ashishwagh.novaspend.exception.ResourceNotFoundException;
 import dev.ashishwagh.novaspend.mapper.UserMapper;
@@ -19,10 +20,21 @@ public class AdminServiceImpl implements AdminService{
 	private final UserRepository userRepo;
 	private final UserMapper userMapper;
 	@Override
-	public List<UserResponse> getUsers()
+	public PageResponse<UserResponse> getUsers(int page,int size,Status status,LocalDateTime fromDate,LocalDateTime toDate)
 	{
-		List<User> users=userRepo.findAll();
-		return users.stream().map(userMapper::toUserResponse).toList();
+		if (page<0) page=0;
+	    if (size<=0) size=10;
+	    if (size>50) size=50;
+		Page<UserResponse> userspage=userRepo.filterUsers(page,size,status,fromDate,toDate);
+		return new PageResponse<>(
+				userspage.getContent(),
+				userspage.getNumber(),
+				userspage.getSize(),
+				userspage.getTotalElements(),
+				userspage.getTotalPages(),
+				userspage.hasPrevious(),
+				userspage.hasNext()
+				);
 	}
 	@Override
 	public UserResponse getUserById(String id) {
