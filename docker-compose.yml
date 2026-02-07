@@ -1,0 +1,32 @@
+version: "3.9"
+
+services:
+
+  mongo:
+    image: mongo:7
+    container_name: novaspend-mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+  redis:
+    image: redis:7
+    container_name: novaspend-redis
+    ports:
+      - "6379:6379"
+
+  novaspend-app:
+    build: .
+    container_name: novaspend-app
+    ports:
+      - "9090:9090"
+    depends_on:
+      - mongo
+      - redis
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+	  -JWT_SECRET_KEY=Msdjjdaj453djsdisdaskdmmanhsajMNKJ3dksadn43janjNDjnajdndjs32Shsd
+
+volumes:
+  mongo_data:

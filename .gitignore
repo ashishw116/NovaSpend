@@ -40,5 +40,5 @@ logs/
 
 ### Environment / Secrets ###
 .env
-application.properties
-application.yml
+
+/target/

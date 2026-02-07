@@ -5,6 +5,7 @@ import java.util.Map;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -56,6 +57,12 @@ public class GlobalExceptionHandler {
 	public ResponseEntity<ApiError> handleBadCredentials(BadCredentialsException ex,HttpServletRequest request) {
 	    ApiError error = new ApiError("Unauthorized",ex.getMessage(),request.getRequestURI(),401);
 	    return new ResponseEntity<>(error, HttpStatus.UNAUTHORIZED);
+	}
+	@ExceptionHandler(UsernameNotFoundException.class)
+	public ResponseEntity<ApiError> handleUsernameNotFoundExcption(UsernameNotFoundException ex,HttpServletRequest request)
+	{
+		ApiError error=new ApiError("Unauthorized",ex.getMessage(),request.getRequestURI(),401);
+		return new ResponseEntity<>(error,HttpStatus.UNAUTHORIZED);
 	}
 	@ExceptionHandler(Exception.class)
     public ResponseEntity<ApiError> handleGeneralException(Exception ex,HttpServletRequest request) {
